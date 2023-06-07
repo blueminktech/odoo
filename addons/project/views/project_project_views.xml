@@ -21,9 +21,9 @@
                     <field name="analytic_account_id" invisible="1"/>
                     <header>
                         <button name="%(project.project_share_wizard_action)d" string="Share Read-only" type="action" class="oe_highlight" groups="project.group_project_manager"
-                        attrs="{'invisible': [('privacy_visibility', '!=', 'portal')]}" context="{'default_access_mode': 'read'}" data-hotkey="r"/>
+                        attrs="{'invisible': [('privacy_visibility', '!=', 'portal')]}" context="{'default_access_mode': 'read', 'dialog_size': 'medium'}" data-hotkey="r"/>
                         <button name="%(project.project_share_wizard_action)d" string="Share Editable" type="action" class="oe_highlight" groups="project.group_project_manager"
-                        attrs="{'invisible': [('privacy_visibility', '!=', 'portal')]}" context="{'default_access_mode': 'edit'}" data-hotkey="e"/>
+                        attrs="{'invisible': [('privacy_visibility', '!=', 'portal')]}" context="{'default_access_mode': 'edit', 'dialog_size': 'medium'}" data-hotkey="e"/>
                         <field name="stage_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}" groups="project.group_project_stages"/>
                     </header>
                 <sheet string="Project">
@@ -406,7 +406,7 @@
                                         <div role="menuitem" class="o_kanban_card_manage_title" groups="project.group_project_user">
                                             <span>Reporting</span>
                                         </div>
-                                        <div role="menuitem" groups="project.group_project_user">
+                                        <div role="menuitem" groups="project.group_project_user" class="o_kanban_task_analysis">
                                             <a name="action_view_tasks_analysis" type="object">Tasks Analysis</a>
                                         </div>
                                         <div role="menuitem" name="project_burndown_menu" groups="project.group_project_user">
@@ -419,7 +419,7 @@
                                         <ul class="oe_kanban_colorpicker" data-field="color" role="popup"/>
                                     </div>
                                     <div role="menuitem" class="col-6" groups="project.group_project_manager">
-                                        <a t-if="record.privacy_visibility.raw_value == 'portal'" class="dropdown-item" role="menuitem" name="%(project.project_share_wizard_action)d" type="action">Share</a>
+                                        <a t-if="record.privacy_visibility.raw_value == 'portal'" class="dropdown-item" role="menuitem" name="%(project.project_share_wizard_action)d" type="action" context="{'dialog_size': 'medium'}">Share</a>
                                         <a class="dropdown-item" role="menuitem" type="edit">Settings</a>
                                     </div>
                                     <div class="o_kanban_card_manage_section o_kanban_manage_view col-12 row ps-0" groups="!project.group_project_manager">
@@ -672,7 +672,7 @@
                 <xpath expr="/kanban" position="inside">
                     <field name="id"/>
                 </xpath>
-                <xpath expr="//div[hasclass('o_kanban_manage_view')]" position="inside">
+                <xpath expr="//div[hasclass('o_kanban_task_analysis')]" position="before">
                     <div role="menuitem" groups="project.group_project_user">
                         <a name="project_update_all_action" type="object" t-attf-context="{'active_id': #{record.id.raw_value} }">Project Updates</a>
                     </div>

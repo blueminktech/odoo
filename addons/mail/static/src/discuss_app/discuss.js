@@ -2,6 +2,7 @@
 
 import { ImStatus } from "./im_status";
 import { AutoresizeInput } from "./autoresize_input";
+import { useThreadActions } from "@mail/core/thread_actions";
 import { Thread } from "../core_ui/thread";
 import { ThreadIcon } from "./thread_icon";
 import { useMessaging, useStore } from "../core/messaging_hook";
@@ -24,12 +25,6 @@ import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { url } from "@web/core/utils/urls";
 
-export const MODES = {
-    MEMBER_LIST: "member-list",
-    SETTINGS: "settings",
-    NONE: "",
-};
-
 export class Discuss extends Component {
     static components = {
         AutoresizeInput,
@@ -40,13 +35,10 @@ export class Discuss extends Component {
         FileUploader,
         ImStatus,
     };
-    static props = {
-        public: { type: Boolean, optional: true },
-    };
+    static props = {};
     static template = "mail.Discuss";
 
     setup() {
-        this.MODES = MODES;
         this.messaging = useMessaging();
         this.store = useStore();
         this.threadService = useState(useService("mail.thread"));
@@ -57,7 +49,7 @@ export class Discuss extends Component {
         this.messageEdition = useMessageEdition();
         this.messageToReplyTo = useMessageToReplyTo();
         this.contentRef = useRef("content");
-        this.state = useState({ activeMode: MODES.NONE });
+        this.root = useRef("root");
         this.orm = useService("orm");
         this.effect = useService("effect");
         this.ui = useState(useService("ui"));
@@ -67,6 +59,7 @@ export class Discuss extends Component {
             messageHighlight: this.messageHighlight,
         });
         this.notification = useService("notification");
+        this.threadActions = useThreadActions();
         useEffect(
             () => {
                 if (
@@ -89,16 +82,12 @@ export class Discuss extends Component {
         onWillUnmount(() => (this.store.discuss.isActive = false));
     }
 
-    markAllAsRead() {
-        this.orm.silent.call("mail.message", "mark_all_as_read");
-    }
-
     get thread() {
         return this.store.threads[this.store.discuss.threadLocalId];
     }
 
     get channelAvatar() {
-        return this.props.public
+        return this.store.inPublicPage
             ? url(
                   `/discuss/channel/${this.thread.id}/avatar_128?unique=${this.thread?.avatarCacheKey}`
               )
